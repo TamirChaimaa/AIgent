@@ -1,0 +1,9 @@
+Flask
+Flask-PyMongo
+flasgger
+python-dotenv
+google-generativeai
+pytest
+pytest-flask
+mongomock
+gunicorn
