@@ -7,10 +7,10 @@ class Customer:
 
     @classmethod
     def create(cls, data):
-        # Insert a new customer document, set created_at if not provided
-        data.setdefault("created_at", datetime.utcnow())
-        result = cls.collection.insert_one(data)
-        return str(result.inserted_id)
+      data.setdefault("created_at", datetime.utcnow())
+      result = cls.collection.insert_one(data)
+      return result 
+
 
     @classmethod
     def find_by_email(cls, email):

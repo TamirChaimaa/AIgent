@@ -1,0 +1,137 @@
+{
+  "swagger": "2.0",
+  "host": "localhost:5000",
+  "schemes": ["http"],
+  "info": {
+    "description": "powered by Flasgger",
+    "termsOfService": "/tos",
+    "title": "A swagger API",
+    "version": "0.0.1"
+  },
+  "definitions": {
+
+  },
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "email": {
+                  "example": "john@example.com",
+                  "type": "string"
+                },
+                "password": {
+                  "example": "strongPassword123",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "email",
+                "password"
+              ],
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "examples": {
+              "application/json": {
+                "token": "jwt_token_here",
+                "user": {
+                  "email": "john@example.com",
+                  "firstname": "John",
+                  "id": "60b8d295f1a4c431d88b4567",
+                  "lastname": "Doe",
+                  "phone": "+212600000000"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Email and password are required"
+          },
+          "401": {
+            "description": "Invalid email or password"
+          },
+          "500": {
+            "description": "Login failed"
+          }
+        },
+        "summary": "Handles user login.\nValidates input, verifies user existence and password,\ngenerates JWT token on success,\nand returns user info with token or error responses.",
+        "tags": [
+          "Authentication Customers"
+        ]
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "email": {
+                  "example": "john@example.com",
+                  "type": "string"
+                },
+                "firstname": {
+                  "example": "John",
+                  "type": "string"
+                },
+                "lastname": {
+                  "example": "Doe",
+                  "type": "string"
+                },
+                "password": {
+                  "example": "strongPassword123",
+                  "type": "string"
+                },
+                "phone": {
+                  "example": "+212600000000",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "firstname",
+                "lastname",
+                "email",
+                "password"
+              ],
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "examples": {
+              "application/json": {
+                "customer_id": "60b8d295f1a4c431d88b4567",
+                "message": "User created successfully"
+              }
+            }
+          },
+          "400": {
+            "description": "Missing required fields or Email already exists"
+          },
+          "500": {
+            "description": "Signup failed"
+          }
+        },
+        "summary": "Handles user registration.\nValidates input, checks for duplicate email,\nhashes the password, saves user to database,\nand returns success or error responses.",
+        "tags": [
+          "Authentication Customers"
+        ]
+      }
+    }
+  }
+}

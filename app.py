@@ -1,27 +1,17 @@
-# app.py
 from flask import Flask, jsonify
 from flasgger import Swagger
-from config.db import db 
+from config.db import db
+from routes.auth_customer_routes import auth_bp  
+from routes.ai_routes import ai_bp
 
 app = Flask(__name__)
 swagger = Swagger(app)
 
-# --- Route GET '/' avec Swagger ---
-@app.route('/', methods=['GET'])
-def home():
-    """
-    Accueil de l'API
-    ---
-    tags:
-      - Accueil
-    responses:
-      200:
-        description: Message de bienvenue
-        examples:
-          application/json: {"message": "Bienvenue dans mon API Flask avec Swagger"}
-    """
-    return jsonify({"message": "Bienvenue dans mon API Flask avec Swagger"})
+# Register the auth blueprint with prefix '/auth'
+app.register_blueprint(auth_bp, url_prefix='/auth')
+
+# Register the AI blueprint with prefix '/chats'
+app.register_blueprint(ai_bp, url_prefix='/chats')
 
 if __name__ == '__main__':
     app.run(debug=True)
-
