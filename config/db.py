@@ -1,51 +1,43 @@
 # config/db.py
-from pymongo import MongoClient
-from dotenv import load_dotenv
 import os
+from pymongo import MongoClient
+from pymongo.errors import ConfigurationError, ServerSelectionTimeoutError
+from dotenv import load_dotenv
 
-# Load environment variables from .env file (pour développement local)
+# Load environment variables from .env file
 load_dotenv()
+print("✅ Fichier .env chargé avec succès")
 
-# Récupérer l'URI MongoDB directement ou construire à partir des variables
-MONGO_URI = os.getenv("MONGO_URI")
+# Load environment variables
+MONGODB_URI = os.getenv('MONGODB_URI')
+DATABASE_NAME = os.getenv('DATABASE_NAME', 'Ecommerce')  # Default database name
 
-if not MONGO_URI:
-    # Fallback: construire l'URI à partir des variables individuelles
-    username = os.getenv("MONGO_USERNAME")
-    password = os.getenv("MONGO_PASSWORD")
-    host = os.getenv("MONGO_HOST")
-    database_name = os.getenv("MONGO_DATABASE")
-    app_name = os.getenv("MONGO_APP_NAME")
-    
-    if all([username, password, host, database_name]):
-        MONGO_URI = (
-            f"mongodb+srv://{username}:{password}@{host}/{database_name}"
-            f"?retryWrites=true&w=majority&appName={app_name}"
-        )
-    else:
-        raise ValueError("MongoDB configuration variables are missing")
+print("=== DEBUG: Variables d'environnement MongoDB ===")
+print(f"MONGODB_URI: {MONGODB_URI[:30] if MONGODB_URI else 'None'}...")
+print(f"MONGODB_URI trouvée: {'✅ Oui' if MONGODB_URI else '❌ Non'}")
+
+if not MONGODB_URI:
+    raise Exception("MONGODB_URI not found in environment variables")
 
 try:
-    # --- Connect to MongoDB Atlas ---
-    client = MongoClient(MONGO_URI)
+    # Create MongoDB client
+    client = MongoClient(MONGODB_URI)
     
-    # Test de connexion
+    # Test the connection
     client.admin.command('ping')
+    print("✅ MongoDB connection successful")
     
-    # Use "Ecommerce" as the default database
-    db = client.get_database("Ecommerce")
+    # Get the database (specify name explicitly)
+    db = client[DATABASE_NAME]
     
-    # List all collections in the database
-    collections = db.list_collection_names()
+    print(f"✅ Database '{DATABASE_NAME}' initialized successfully")
     
-    # Print success message and available collections
-    print("Successfully connected to MongoDB Atlas")
-    print("Available collections:", collections)
-
+except ConfigurationError as e:
+    print(f"❌ Database connection error: {e}")
+    raise Exception(f"Database initialization error: {e}")
+except ServerSelectionTimeoutError as e:
+    print(f"❌ Database connection timeout: {e}")
+    raise Exception(f"Database initialization error: {e}")
 except Exception as e:
-    # Print error message if the connection fails
-    print("Failed to connect to MongoDB Atlas")
-    print("Error:", e)
-    
-    # Set db to None to indicate failure
-    db = None
+    print(f"❌ Database connection error: {e}")
+    raise Exception(f"Database initialization error: {e}")

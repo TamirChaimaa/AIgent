@@ -1,27 +1,30 @@
+# test_connection.py
 import os
 from pymongo import MongoClient
-from flask import Flask
+from pymongo.errors import ConfigurationError, ServerSelectionTimeoutError
 
-# Récupération de l'URI MongoDB
-MONGODB_URI = os.getenv('MONGODB_URI')
+# Load your URI
+MONGODB_URI ="mongodb+srv://chaimaa02tamir:yqNPcsrRyMu3VoX5@ecommerce.s5qxlkt.mongodb.net/?retryWrites=true&w=majority&appName=Ecommerce"  # Replace with your actual URI
 
-if not MONGODB_URI:
-    raise ValueError("MongoDB configuration variables are missing")
-
-# Initialisation du client MongoDB
 try:
-    client = MongoClient(MONGODB_URI)
-    # Test de connexion
+    print("Testing MongoDB connection...")
+    client = MongoClient(MONGODB_URI, serverSelectionTimeoutMS=5000)
+    
+    # Test the connection
     client.admin.command('ping')
-    print("MongoDB connection successful")
+    print("✅ MongoDB connection successful!")
+    
+    # List databases
+    print("Available databases:", client.list_database_names())
+    
+except ConfigurationError as e:
+    print(f"❌ Configuration Error: {e}")
+except ServerSelectionTimeoutError as e:
+    print(f"❌ Server Selection Timeout: {e}")
 except Exception as e:
-    print(f"Database connection error: {e}")
-    raise
-
-# Récupération de la base de données (le nom sera extrait de l'URI)
-db = client.get_default_database()
-
-def init_db(app: Flask):
-    """Initialise la base de données avec l'application Flask"""
-    app.config['MONGODB_URI'] = MONGODB_URI
-    return db
+    print(f"❌ Unexpected error: {e}")
+finally:
+    try:
+        client.close()
+    except:
+        pass
