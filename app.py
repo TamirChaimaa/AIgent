@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify
 from flasgger import Swagger
 from config.db import db
@@ -10,8 +11,9 @@ swagger = Swagger(app)
 # Register the auth blueprint with prefix '/auth'
 app.register_blueprint(auth_bp, url_prefix='/auth')
 
-# Register the AI blueprint with prefix '/chats'
+# Register the AI blueprint with prefix test '/chats'
 app.register_blueprint(ai_bp, url_prefix='/chats')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
