@@ -2,11 +2,16 @@
 import os
 from pymongo import MongoClient
 from pymongo.errors import ConfigurationError, ServerSelectionTimeoutError
-from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
-print("✅ Fichier .env chargé avec succès")
+# Try to load environment variables from .env file (for local development)
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+    print("✅ Fichier .env chargé avec succès")
+except ImportError:
+    print("⚠️ python-dotenv not installed, using system environment variables")
+except Exception as e:
+    print(f"⚠️ Could not load .env file: {e}")
 
 # Load environment variables
 MONGODB_URI = os.getenv('MONGODB_URI')
@@ -15,9 +20,20 @@ DATABASE_NAME = os.getenv('DATABASE_NAME', 'Ecommerce')  # Default database name
 print("=== DEBUG: Variables d'environnement MongoDB ===")
 print(f"MONGODB_URI: {MONGODB_URI[:30] if MONGODB_URI else 'None'}...")
 print(f"MONGODB_URI trouvée: {'✅ Oui' if MONGODB_URI else '❌ Non'}")
+print(f"DATABASE_NAME: {DATABASE_NAME}")
+
+# List all environment variables for debugging (remove in production)
+print("=== DEBUG: All Environment Variables ===")
+for key, value in os.environ.items():
+    if 'MONGO' in key.upper() or 'DATABASE' in key.upper():
+        print(f"{key}: {value[:30]}..." if len(str(value)) > 30 else f"{key}: {value}")
 
 if not MONGODB_URI:
-    raise Exception("MONGODB_URI not found in environment variables")
+    # Try common alternative environment variable names
+    MONGODB_URI = os.getenv('MONGO_URI') or os.getenv('MONGO_URL') or os.getenv('DATABASE_URL')
+    
+    if not MONGODB_URI:
+        raise Exception("MONGODB_URI not found in environment variables. Please set MONGODB_URI, MONGO_URI, or DATABASE_URL")
 
 try:
     # Create MongoDB client
