@@ -3,11 +3,16 @@ from flask import Flask, jsonify, send_from_directory
 from flasgger import Swagger
 from flask_cors import CORS
 
-# Import blueprints
-from routes.ai_routes import ai_bp
-
+# Création de l'application Flask
 app = Flask(__name__)
-CORS(app)
+
+# Configuration CORS - Autorise tous les domaines, méthodes et certains headers
+CORS(app,
+     origins=['*'],  # Autorise TOUS les domaines à accéder à votre API
+     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  # Méthodes HTTP autorisées
+     allow_headers=['Content-Type', 'Authorization', 'Access-Control-Allow-Credentials'],  # Headers autorisés
+     supports_credentials=True  # Autorise l'envoi de cookies/credentials
+)
 
 # Flask configuration
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', '123456789')
@@ -36,9 +41,11 @@ except Exception as e:
 # Initialize Swagger documentation
 swagger = Swagger(app)
 
+# Import blueprints AFTER app creation (pour éviter erreurs d’import circulaire)
+from routes.ai_routes import ai_bp
+
 # Register blueprints
 app.register_blueprint(ai_bp, url_prefix='/ai')
-
 
 # Root endpoint for basic API information
 @app.route('/')
@@ -89,4 +96,3 @@ def serve_image(filename):
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
-
