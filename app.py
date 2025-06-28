@@ -37,11 +37,8 @@ except Exception as e:
 swagger = Swagger(app)
 
 # Register blueprints
-app.register_blueprint(auth_bp, url_prefix='/auth')
-app.register_blueprint(salesteam_auth_bp, url_prefix='/salesteam/auth')
 app.register_blueprint(ai_bp, url_prefix='/ai')
-app.register_blueprint(product_bp, url_prefix='/products')
-app.register_blueprint(image_bp, url_prefix='/images')
+
 
 # Root endpoint for basic API information
 @app.route('/')
