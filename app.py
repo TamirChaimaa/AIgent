@@ -20,6 +20,7 @@ except Exception as e:
 
 # Importer les routes après la configuration
 from routes.auth_customer_routes import auth_bp   
+from routes.auth_salesteam_routes import auth_bp as salesteam_auth_bp
 from routes.ai_routes import ai_bp
 
 swagger = Swagger(app)
@@ -27,8 +28,14 @@ swagger = Swagger(app)
 # Register the auth blueprint with prefix '/auth'
 app.register_blueprint(auth_bp, url_prefix='/auth')
 
+# Register the salesteam auth blueprint with prefix '/salesteam/auth'
+app.register_blueprint(salesteam_auth_bp, url_prefix='/salesteam/auth')
+
 # Register the AI blueprint with prefix '/chats'
 app.register_blueprint(ai_bp, url_prefix='/chats')
+
+#
+
 
 @app.route('/')
 def home():
@@ -36,6 +43,7 @@ def home():
         "message": "API Ecommerce is running!",
         "endpoints": {
             "auth": "/auth",
+            "salesteam_auth": "/salesteam/auth",
             "chats": "/chats",
             "health": "/health"
         }

@@ -39,6 +39,7 @@ try:
     # Create MongoDB client
     client = MongoClient(MONGODB_URI)
     
+    
     # Test the connection
     client.admin.command('ping')
     print("✅ MongoDB connection successful")

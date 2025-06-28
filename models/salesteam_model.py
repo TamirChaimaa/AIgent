@@ -18,6 +18,11 @@ class SalesTeam:
         return cls.collection.find_one({"_id": ObjectId(_id)})
 
     @classmethod
+    def find_by_email(cls, email):
+        # Find a sales team member by email
+        return cls.collection.find_one({"email": email})
+
+    @classmethod
     def find_all(cls, filter=None):
         # Retrieve all sales team members matching filter or all
         filter = filter or {}
