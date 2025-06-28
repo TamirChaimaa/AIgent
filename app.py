@@ -4,11 +4,7 @@ from flasgger import Swagger
 from flask_cors import CORS
 
 # Import blueprints
-from routes.auth_customer_routes import auth_bp
-from routes.auth_salesteam_routes import auth_bp as salesteam_auth_bp
 from routes.ai_routes import ai_bp
-from routes.product_routes import product_bp
-from routes.image_routes import image_bp  # <-- Image routes blueprint
 
 app = Flask(__name__)
 CORS(app)
