@@ -1,14 +1,18 @@
-# app.py
+
 import os
 from flask import Flask, jsonify
 from flasgger import Swagger
+from routes.auth_customer_routes import auth_bp
+from routes.auth_salesteam_routes import auth_bp as salesteam_auth_bp
+from routes.ai_routes import ai_bp
+from routes.product_routes import product_bp  
 
 app = Flask(__name__)
 
-# Configuration Flask
+# Flask configuration
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', '123456789')
 
-# Test de connexion DB au démarrage
+# Attempt to connect to the database on startup
 try:
     from config.db import db
     if db is None:
@@ -18,25 +22,23 @@ try:
 except Exception as e:
     print(f"Database initialization error: {e}")
 
-# Importer les routes après la configuration
-from routes.auth_customer_routes import auth_bp   
-from routes.auth_salesteam_routes import auth_bp as salesteam_auth_bp
-from routes.ai_routes import ai_bp
 
+# Initialize Swagger documentation
 swagger = Swagger(app)
 
-# Register the auth blueprint with prefix '/auth'
+# Register customer authentication routes under /auth
 app.register_blueprint(auth_bp, url_prefix='/auth')
 
-# Register the salesteam auth blueprint with prefix '/salesteam/auth'
+# Register salesman authentication routes under /salesteam/auth
 app.register_blueprint(salesteam_auth_bp, url_prefix='/salesteam/auth')
 
-# Register the AI blueprint with prefix '/chats'
+# Register AI chat routes under /chats
 app.register_blueprint(ai_bp, url_prefix='/chats')
 
-#
+# Register product management routes under /products
+app.register_blueprint(product_bp, url_prefix='/products')
 
-
+# Root endpoint for basic API information
 @app.route('/')
 def home():
     return jsonify({
@@ -45,16 +47,18 @@ def home():
             "auth": "/auth",
             "salesteam_auth": "/salesteam/auth",
             "chats": "/chats",
+            "products": "/products",
             "health": "/health"
         }
     })
 
+# Health check endpoint to test database connectivity
 @app.route('/health')
 def health():
     try:
         from config.db import db, client
         if db is not None:
-            # Test ping
+            # Ping the database to ensure connection
             client.admin.command('ping')
             collections = db.list_collection_names()
             return jsonify({
@@ -64,7 +68,7 @@ def health():
             })
         else:
             return jsonify({
-                "status": "unhealthy", 
+                "status": "unhealthy",
                 "database": "disconnected"
             }), 500
     except Exception as e:
@@ -73,6 +77,7 @@ def health():
             "error": str(e)
         }), 500
 
+# Run the Flask development server
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
