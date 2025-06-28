@@ -145,8 +145,7 @@ class AuthController:
                 'token': token,
                 'user': {
                     'id': str(user['_id']),
-                    'firstname': user['firstname'],
-                    'lastname': user['lastname'],
+                    'fullname':(user['fullname']),
                     'email': user['email'],
                     'phone': user.get('phone', '')
                 }
