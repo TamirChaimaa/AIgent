@@ -9,3 +9,4 @@ mongomock
 gunicorn
 bcrypt
 PyJWT
+flask-cors

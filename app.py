@@ -1,6 +1,7 @@
 import os
 from flask import Flask, jsonify, send_from_directory
 from flasgger import Swagger
+from flask_cors import CORS
 
 # Import blueprints
 from routes.auth_customer_routes import auth_bp
@@ -10,6 +11,7 @@ from routes.product_routes import product_bp
 from routes.image_routes import image_bp  # <-- Image routes blueprint
 
 app = Flask(__name__)
+CORS(app)
 
 # Flask configuration
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', '123456789')
