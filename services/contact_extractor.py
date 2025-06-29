@@ -21,7 +21,9 @@ class ContactExtractor:
             r'\+1\s?\d{3}[-.]?\d{3}[-.]?\d{4}', # +1 123-456-7890
             r'\+?[0-9]{1,4}[-.\s]?[0-9]{1,4}[-.\s]?[0-9]{1,4}[-.\s]?[0-9]{1,4}',  # International
             r'[0-9]{10,15}',  # Simple number
-            r'\+?[0-9]{2,4}\s*[0-9]{2,4}\s*[0-9]{2,4}\s*[0-9]{2,4}'  # International with spaces
+            r'\+?[0-9]{2,4}\s*[0-9]{2,4}\s*[0-9]{2,4}\s*[0-9]{2,4}',  # International with spaces
+            r'\+33\s*[0-9]{1,2}\s*[0-9]{2}\s*[0-9]{2}\s*[0-9]{2}\s*[0-9]{2}',  # French format
+            r'0[1-9]\s*[0-9]{2}\s*[0-9]{2}\s*[0-9]{2}\s*[0-9]{2}'  # French mobile
         ]
         
         for pattern in phone_patterns:
@@ -45,7 +47,12 @@ class ContactExtractor:
             r"name\s*:\s*([a-zA-ZÀ-ÿ\s]+)",
             r"je suis\s+([a-zA-ZÀ-ÿ\s]+)",
             r"i'm\s+([a-zA-ZÀ-ÿ\s]+)",
-            r"my name is\s+([a-zA-ZÀ-ÿ\s]+)"
+            r"my name is\s+([a-zA-ZÀ-ÿ\s]+)",
+            # More flexible patterns
+            r"appelle\s+([a-zA-ZÀ-ÿ\s]+)",
+            r"nom\s+([a-zA-ZÀ-ÿ\s]+)",
+            r"prénom\s+([a-zA-ZÀ-ÿ\s]+)",
+            r"prénom\s*:\s*([a-zA-ZÀ-ÿ\s]+)"
         ]
         
         for pattern in name_patterns:
