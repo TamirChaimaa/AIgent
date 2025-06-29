@@ -1,4 +1,3 @@
-# services/chat_client.py
 import os
 import google.generativeai as genai
 from dotenv import load_dotenv
@@ -41,7 +40,7 @@ class ChatClient:
             
             # AI acknowledges and agrees to answer based only on this context
             {"role": "model", "parts": [
-                "Okay, I will only answer based on this product list. Ask your question."
+                "Okay, I will answer based on this product list and recommend relevant products. I will format my responses with MESSAGE: and PRODUCTS: as requested."
             ]}
         ])
     
@@ -65,4 +64,3 @@ class ChatClient:
             # Log any exception that occurs and re-raise it
             logging.error(f"Gemini send_message error: {e}")
             raise
-
