@@ -41,11 +41,21 @@ except Exception as e:
 # Initialize Swagger documentation
 swagger = Swagger(app)
 
-# Import blueprints AFTER app creation (pour éviter erreurs d’import circulaire)
+# Import blueprints
+from routes.auth_customer_routes import auth_bp
+from routes.auth_salesteam_routes import auth_bp as salesteam_auth_bp
 from routes.ai_routes import ai_bp
+from routes.product_routes import product_bp
+from routes.image_routes import image_bp  # <-- Image routes blueprint
+from routes.message_routes import message_bp  # <-- Message routes blueprint
 
 # Register blueprints
+app.register_blueprint(auth_bp, url_prefix='/auth')
+app.register_blueprint(salesteam_auth_bp, url_prefix='/salesteam/auth')
 app.register_blueprint(ai_bp, url_prefix='/ai')
+app.register_blueprint(product_bp, url_prefix='/products')
+app.register_blueprint(image_bp, url_prefix='/images')
+app.register_blueprint(message_bp, url_prefix='/messages')
 
 # Root endpoint for basic API information
 @app.route('/')
@@ -58,6 +68,7 @@ def home():
             "ai": "/ai",
             "products": "/products",
             "images": "/images",
+            "messages": "/messages",
             "health": "/health"
         }
     })
