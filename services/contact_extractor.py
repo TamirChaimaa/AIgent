@@ -8,66 +8,69 @@ class ContactExtractor:
     """
     
     @staticmethod
-    def extract_contact_info(user_response: str) -> Dict:
+    def extract_contact_info(user_message: str) -> Dict:
         """
-        Extract contact information from user response using AI
+        Extract contact information from user message using regex patterns
         """
-        try:
-            # Use AI to extract contact information
-            ai_service = AiService()
-            
-            prompt = f"""
-            Extract contact information from this user response. Return ONLY a JSON object with the following structure:
-            
-            User Response: "{user_response}"
-            
-            Expected JSON format:
-            {{
-                "name": "extracted name or null",
-                "email": "extracted email or null", 
-                "phone": "extracted phone or null",
-                "confidence": "high/medium/low",
-                "extraction_method": "ai/regex/combined"
-            }}
-            
-            Rules:
-            1. Extract name, email, and phone if present
-            2. If not found, use null
-            3. For confidence: high (clear info), medium (partial), low (unclear)
-            4. For extraction_method: ai (AI extracted), regex (pattern matched), combined (both)
-            
-            Return ONLY the JSON object, nothing else.
-            """
-            
-            response = ai_service.ask_question(prompt)
-            
-            if isinstance(response, dict) and 'message' in response:
-                response_text = response['message']
-                
-                # Try to extract JSON from AI response
-                if "{" in response_text and "}" in response_text:
-                    json_start = response_text.find("{")
-                    json_end = response_text.rfind("}") + 1
-                    json_str = response_text[json_start:json_end]
-                    
-                    import json
-                    contact_data = json.loads(json_str)
-                    
-                    # Validate extracted data
-                    contact_data = ContactExtractor._validate_extracted_data(contact_data)
-                    
-                    return contact_data
-                else:
-                    # Fallback to regex extraction
-                    return ContactExtractor._extract_with_regex(user_response)
-            else:
-                # Fallback to regex extraction
-                return ContactExtractor._extract_with_regex(user_response)
-                
-        except Exception as e:
-            print(f"Error extracting contact info with AI: {e}")
-            # Fallback to regex extraction
-            return ContactExtractor._extract_with_regex(user_response)
+        contact_info = {}
+        
+        # Extract phone number (various formats)
+        phone_patterns = [
+            r'\b\d{3}[-.]?\d{3}[-.]?\d{4}\b',  # 123-456-7890 or 123.456.7890 or 1234567890
+            r'\(\d{3}\)\s?\d{3}[-.]?\d{4}',    # (123) 456-7890
+            r'\+1\s?\d{3}[-.]?\d{3}[-.]?\d{4}', # +1 123-456-7890
+            r'\+?[0-9]{1,4}[-.\s]?[0-9]{1,4}[-.\s]?[0-9]{1,4}[-.\s]?[0-9]{1,4}',  # International
+            r'[0-9]{10,15}',  # Simple number
+            r'\+?[0-9]{2,4}\s*[0-9]{2,4}\s*[0-9]{2,4}\s*[0-9]{2,4}'  # International with spaces
+        ]
+        
+        for pattern in phone_patterns:
+            phone_match = re.search(pattern, user_message)
+            if phone_match:
+                contact_info['phone'] = phone_match.group()
+                break
+        
+        # Extract age (simple number between 16-99)
+        age_match = re.search(r'\b(1[6-9]|[2-9]\d)\b', user_message)
+        if age_match:
+            potential_age = int(age_match.group())
+            if 16 <= potential_age <= 99:
+                contact_info['age'] = potential_age
+        
+        # Extract name (look for patterns like "je m'appelle", "mon nom est", etc.)
+        name_patterns = [
+            r"je m'appelle\s+([a-zA-ZÀ-ÿ\s]+)",
+            r"mon nom est\s+([a-zA-ZÀ-ÿ\s]+)",
+            r"nom\s*:\s*([a-zA-ZÀ-ÿ\s]+)",
+            r"name\s*:\s*([a-zA-ZÀ-ÿ\s]+)",
+            r"je suis\s+([a-zA-ZÀ-ÿ\s]+)",
+            r"i'm\s+([a-zA-ZÀ-ÿ\s]+)",
+            r"my name is\s+([a-zA-ZÀ-ÿ\s]+)"
+        ]
+        
+        for pattern in name_patterns:
+            match = re.search(pattern, user_message.lower())
+            if match:
+                contact_info['name'] = match.group(1).strip().title()
+                break
+        
+        # Extract email
+        email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+        email_match = re.search(email_pattern, user_message)
+        if email_match:
+            contact_info['email'] = email_match.group(0)
+        
+        # Determine confidence level
+        confidence = "low"
+        if contact_info.get('name') and contact_info.get('email') and contact_info.get('phone'):
+            confidence = "high"
+        elif (contact_info.get('name') and contact_info.get('email')) or (contact_info.get('name') and contact_info.get('phone')) or (contact_info.get('email') and contact_info.get('phone')):
+            confidence = "medium"
+        
+        contact_info['confidence'] = confidence
+        contact_info['extraction_method'] = 'regex'
+        
+        return contact_info
     
     @staticmethod
     def _extract_with_regex(user_response: str) -> Dict:

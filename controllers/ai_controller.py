@@ -38,73 +38,78 @@ class AiController:
             # Create the answer message
             answer_message = ai_response.get('message', 'No response generated')
             
-            # Save the question and answer to the messages collection
+            # Save the message to database
             message_id = MessageModel.create_message(
                 question=user_question,
                 answer=answer_message,
                 product_ids=product_ids
             )
-
-            # Analyze user interest level
-            interest_analysis = InterestAnalyzer.analyze_interest_level(
-                question=user_question,
-                answer=answer_message,
-                products=ai_response.get('products', [])
-            )
-
-            # Generate lead capture message if interest is high enough
-            lead_capture_message = InterestAnalyzer.generate_lead_capture_message(interest_analysis)
-
-            # Prepare response
+            
+            # Analyze interest level using both methods
+            interest_analysis = InterestAnalyzer.analyze_interest_level(user_question, answer_message, ai_response.get('products', []))
+            
+            # Additional check using the new serious interest detection
+            serious_interest = InterestAnalyzer.detect_serious_interest(user_question)
+            
+            # Combine both analyses - if either method detects high interest, capture lead
+            should_capture_lead = interest_analysis.get('should_capture_lead', False) or serious_interest
+            
+            # Extract contact information from the user question
+            contact_data = ContactExtractor.extract_contact_info(user_question)
+            
+            # Generate lead capture message if needed
+            lead_capture_message = None
+            linked_lead_id = existing_lead_id
+            
+            if should_capture_lead and not linked_lead_id:
+                lead_capture_message = InterestAnalyzer.generate_lead_capture_message(interest_analysis)
+            
+            # Prepare response data
             response_data = {
                 'question': user_question,
                 'answer': answer_message,
-                'products': ai_response.get('products', []),
                 'message_id': message_id,
-                'interest_analysis': interest_analysis
+                'linked_lead_id': linked_lead_id,
+                'interest_analysis': {
+                    **interest_analysis,
+                    'serious_interest_detected': serious_interest,
+                    'combined_should_capture': should_capture_lead
+                },
+                'products': ai_response.get('products', []),
+                'contact_extraction': contact_data
             }
-
-            # Check if we should link to existing lead or create new one
-            linked_lead_id = None
-            
-            if existing_lead_id:
-                # Link message to existing lead
-                LeadModel.link_message_to_lead(existing_lead_id, message_id)
-                linked_lead_id = existing_lead_id
-                response_data['linked_lead_id'] = linked_lead_id
-                response_data['message'] = 'Message linked to existing lead'
-            
-            elif user_email:
-                # Check if lead exists with this email
-                existing_lead = LeadModel.get_lead_by_email(user_email)
-                if existing_lead:
-                    # Link message to existing lead
-                    LeadModel.link_message_to_lead(existing_lead['_id'], message_id)
-                    linked_lead_id = existing_lead['_id']
-                    response_data['linked_lead_id'] = linked_lead_id
-                    response_data['message'] = 'Message linked to existing lead'
             
             # Add lead capture message if user shows interest and no existing lead
             if lead_capture_message and not linked_lead_id:
                 response_data['lead_capture_message'] = lead_capture_message
                 response_data['should_capture_lead'] = True
                 
-                # Create a preliminary lead record with basic info
-                # This will be updated when user provides contact details
+                # Create lead with extracted contact information
                 interested_products = [p.get('name', '') for p in ai_response.get('products', [])]
                 
-                # Create lead with placeholder info (will be updated via API)
+                # Use extracted contact data or fallback to placeholders
+                lead_name = contact_data.get('name') if contact_data.get('name') else "To be provided"
+                lead_email = contact_data.get('email') if contact_data.get('email') else "pending@example.com"
+                lead_phone = contact_data.get('phone') if contact_data.get('phone') else "To be provided"
+                
+                # Create lead with extracted data
                 lead_id = LeadModel.create_lead(
-                    name="To be provided",  # Will be updated when user fills form
-                    email="pending@example.com",  # Will be updated when user fills form
-                    phone="To be provided",  # Will be updated when user fills form
+                    name=lead_name,
+                    email=lead_email,
+                    phone=lead_phone,
                     interested_products=interested_products,
                     source_message_id=message_id
                 )
                 
                 if lead_id:
                     response_data['preliminary_lead_id'] = lead_id
-                    response_data['lead_status'] = 'pending_contact_info'
+                    response_data['lead_status'] = 'new' if contact_data.get('confidence') in ['high', 'medium'] else 'pending_contact_info'
+                    response_data['lead_created'] = True
+                    
+                    # If we have good contact data, link the message to the lead
+                    if contact_data.get('confidence') in ['high', 'medium']:
+                        LeadModel.link_message_to_lead(lead_id, message_id)
+                        response_data['linked_lead_id'] = lead_id
             else:
                 response_data['should_capture_lead'] = False
 

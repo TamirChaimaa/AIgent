@@ -26,6 +26,36 @@ class InterestAnalyzer:
     ]
     
     @staticmethod
+    def detect_serious_interest(user_message: str) -> bool:
+        """
+        Detect if customer shows serious interest in purchasing
+        """
+        interest_keywords = [
+            "buy", "purchase", "order", "get this", "take it", "want this",
+            "interested in", "looks good", "perfect", "exactly what", 
+            "how much", "price", "cost", "afford", "budget", "payment",
+            "when can i", "available", "in stock", "reserve", "hold",
+            "size", "fit", "try on", "store location", "pickup", "delivery",
+            # French equivalents
+            "acheter", "commander", "prendre", "vouloir", "intéressé par",
+            "parfait", "exactement", "combien", "prix", "coût", "budget",
+            "disponible", "en stock", "réserver", "livraison", "retrait"
+        ]
+        
+        message_lower = user_message.lower()
+        interest_count = sum(1 for keyword in interest_keywords if keyword in message_lower)
+        
+        serious_phrases = [
+            "i want", "i'll take", "can i buy", "how do i order", 
+            "where can i", "i need these", "perfect for me",
+            # French equivalents
+            "je veux", "je vais prendre", "peux-je acheter", "comment commander",
+            "où puis-je", "j'ai besoin", "parfait pour moi"
+        ]
+        
+        return interest_count >= 2 or any(phrase in message_lower for phrase in serious_phrases)
+    
+    @staticmethod
     def generate_ai_keywords(question: str, context: str = "") -> Dict:
         """
         Use AI to generate dynamic keywords for interest analysis
