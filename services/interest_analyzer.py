@@ -36,10 +36,20 @@ class InterestAnalyzer:
             "how much", "price", "cost", "afford", "budget", "payment",
             "when can i", "available", "in stock", "reserve", "hold",
             "size", "fit", "try on", "store location", "pickup", "delivery",
+            "want", "take", "want to buy", "want to order",
+            "like", "like to buy", "like to order",
+            "love", "love to buy", "love to order",
+            "need", "need to buy", "need to order",
+   
             # French equivalents
             "acheter", "commander", "prendre", "vouloir", "intéressé par",
             "parfait", "exactement", "combien", "prix", "coût", "budget",
             "disponible", "en stock", "réserver", "livraison", "retrait"
+            "taille", "tenir", "essayer", "magasin", "emporter", "livraison",
+            "veux", "prendre", "veux acheter", "veux commander",
+            "aime", "aime acheter", "aime commander",
+            "adore", "adore acheter", "adore commander",
+            "besoin", "besoin acheter", "besoin commander",
         ]
         
         message_lower = user_message.lower()
@@ -293,18 +303,9 @@ class InterestAnalyzer:
             message += "✅ Inform you about new promotions\n"
             message += "✅ Answer all your questions in detail"
         else:
-            message = "👍 I see you like our products! "
-            message += "To send you exclusive info and special offers, "
-            message += "could you please share your contact details?\n\n"
-            message += "📝 **Required info:**\n"
-            message += "• Name:\n"
-            message += "• Email:\n"
-            message += "• Phone:\n\n"
-            message += "This will help us serve you better!"
-        
+            message = "Thank you for your interest in our products! "
         if products:
             product_names = ", ".join(products[:3])
-            message += f"\n\n📦 **Products you're interested in:** {product_names}"
         
         message += "\n\n💬 **Just reply with your information above!**"
         
