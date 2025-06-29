@@ -279,20 +279,25 @@ class InterestAnalyzer:
         }
     
     @staticmethod
-    def generate_lead_capture_message(interest_analysis: Dict) -> Optional[str]:
+    def generate_lead_capture_message(interest_analysis: Dict, user_message: Optional[str] = None) -> Optional[str]:
+      """
+       Generate lead capture message only if no contact info already exists in user message.
        """
-       Generate a friendly message to capture lead information
-       """
-       if not interest_analysis.get("should_capture_lead"):
+      if not interest_analysis.get("should_capture_lead"):
         return None
 
-       interest_level = interest_analysis.get("interest_level", "medium")
-       products = interest_analysis.get("recommended_products", [])
+      if user_message:
+        contact_info = InterestAnalyzer.extract_contact_info(user_message)
+        if contact_info.get("email") or contact_info.get("phone"):
+            return None  # Ne pas générer de message si coordonnées déjà présentes
 
-       product_names = ", ".join(products[:3]) if products else ""
-       message = ""
+      interest_level = interest_analysis.get("interest_level", "medium")
+      products = interest_analysis.get("recommended_products", [])
 
-       if interest_level == "high":
+      product_names = ", ".join(products[:3]) if products else ""
+      message = ""
+
+      if interest_level == "high":
         message += "🎉 Excellent! I see you're very interested in our products"
         if product_names:
             message += f" like {product_names}"
@@ -309,7 +314,7 @@ class InterestAnalyzer:
         message += "✅ Answer all your questions in detail\n"
         message += "\n💬 **Just reply with your information above!**"
 
-       elif interest_level == "medium":
+      elif interest_level == "medium":
         message += "😊 Great! I see you're interested"
         if product_names:
             message += f" in {product_names}"
@@ -320,12 +325,13 @@ class InterestAnalyzer:
         message += "• Phone number:\n"
         message += "\n💬 **Just reply with your information above!**"
 
-       else:
+      else:
         message += "Thank you for your interest!"
         if product_names:
             message += f" You asked about: {product_names}."
 
-       return message
+      return message
+
 
     
     @staticmethod
@@ -342,3 +348,16 @@ class InterestAnalyzer:
                 potential_products.append(word)
         
         return potential_products
+
+    @staticmethod
+    def extract_contact_info(text: str) -> Dict[str, Optional[str]]:
+      """
+        Extract email and phone number from the user message.
+     """
+      email_match = re.search(r'[\w\.-]+@[\w\.-]+\.\w+', text)
+      phone_match = re.search(r'\b(?:\+212|0)[5-7]\d{8}\b', text)
+
+      return {
+        "email": email_match.group(0) if email_match else None,
+        "phone": phone_match.group(0) if phone_match else None
+    }
