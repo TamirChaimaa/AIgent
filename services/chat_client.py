@@ -13,7 +13,7 @@ class ChatClient:
         configuring the generative AI client, and setting the model.
         """
         # Get the Gemini API key from environment variables change tehe api key
-        self.api_key = "AIzaSyDGsHDthZNSA8X50vCPCB8UAo6vAL-pNRw"
+        self.api_key = "AIzaSyBFVWDxGku0_4GsgWyfPH6m9nOwCLJSh-A"
         
         # If the API key is not set, raise an error
         if not self.api_key:
