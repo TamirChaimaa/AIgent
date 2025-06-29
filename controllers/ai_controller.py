@@ -92,6 +92,13 @@ class AiController:
                 lead_email = contact_data.get('email') if contact_data.get('email') else "pending@example.com"
                 lead_phone = contact_data.get('phone') if contact_data.get('phone') else "To be provided"
                 
+                # Debug: Print contact extraction results
+                print(f"DEBUG - Contact Extraction Results:")
+                print(f"  Original contact_data: {contact_data}")
+                print(f"  Using name: {lead_name}")
+                print(f"  Using email: {lead_email}")
+                print(f"  Using phone: {lead_phone}")
+                
                 # Create lead with extracted data
                 lead_id = LeadModel.create_lead(
                     name=lead_name,
