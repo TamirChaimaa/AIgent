@@ -41,18 +41,31 @@ class ContactExtractor:
         
         # Extract name (look for patterns like "je m'appelle", "mon nom est", etc.)
         name_patterns = [
+            # French patterns
             r"je m'appelle\s+([a-zA-ZÀ-ÿ\s]+)",
             r"mon nom est\s+([a-zA-ZÀ-ÿ\s]+)",
             r"nom\s*:\s*([a-zA-ZÀ-ÿ\s]+)",
-            r"name\s*:\s*([a-zA-ZÀ-ÿ\s]+)",
             r"je suis\s+([a-zA-ZÀ-ÿ\s]+)",
-            r"i'm\s+([a-zA-ZÀ-ÿ\s]+)",
-            r"my name is\s+([a-zA-ZÀ-ÿ\s]+)",
-            # More flexible patterns
             r"appelle\s+([a-zA-ZÀ-ÿ\s]+)",
             r"nom\s+([a-zA-ZÀ-ÿ\s]+)",
             r"prénom\s+([a-zA-ZÀ-ÿ\s]+)",
-            r"prénom\s*:\s*([a-zA-ZÀ-ÿ\s]+)"
+            r"prénom\s*:\s*([a-zA-ZÀ-ÿ\s]+)",
+            # English patterns
+            r"name\s*:\s*([a-zA-ZÀ-ÿ\s]+)",
+            r"i'm\s+([a-zA-ZÀ-ÿ\s]+)",
+            r"my name is\s+([a-zA-ZÀ-ÿ\s]+)",
+            r"i am\s+([a-zA-ZÀ-ÿ\s]+)",
+            r"call me\s+([a-zA-ZÀ-ÿ\s]+)",
+            r"my name's\s+([a-zA-ZÀ-ÿ\s]+)",
+            r"i'm called\s+([a-zA-ZÀ-ÿ\s]+)",
+            r"my name\s+([a-zA-ZÀ-ÿ\s]+)",
+            r"first name\s*:\s*([a-zA-ZÀ-ÿ\s]+)",
+            r"last name\s*:\s*([a-zA-ZÀ-ÿ\s]+)",
+            r"full name\s*:\s*([a-zA-ZÀ-ÿ\s]+)",
+            # More flexible patterns
+            r"name\s+([a-zA-ZÀ-ÿ\s]+)",
+            r"called\s+([a-zA-ZÀ-ÿ\s]+)",
+            r"named\s+([a-zA-ZÀ-ÿ\s]+)"
         ]
         
         for pattern in name_patterns:
@@ -177,9 +190,16 @@ class ContactExtractor:
         
         # Keywords that indicate contact information
         contact_keywords = [
+            # French keywords
             "nom", "name", "email", "mail", "téléphone", "phone", "tél", "tel",
-            "je m'appelle", "mon nom est", "my name is", "i'm",
-            "@", ".com", ".fr", ".net", ".org"
+            "je m'appelle", "mon nom est", "prénom", "appelle",
+            # English keywords
+            "my name is", "i'm", "i am", "call me", "my name's", "i'm called",
+            "first name", "last name", "full name", "contact", "contact info",
+            "phone number", "mobile", "cell", "cell phone", "telephone",
+            "email address", "e-mail", "mail address",
+            # Common symbols
+            "@", ".com", ".fr", ".net", ".org", ".co.uk", ".ca"
         ]
         
         # Check for email pattern
