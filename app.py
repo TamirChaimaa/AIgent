@@ -43,12 +43,14 @@ swagger = Swagger(app)
 
 # Import blueprints
 from routes.ai_routes import ai_bp
-from routes.message_routes import message_bp  
+from routes.message_routes import message_bp
+from routes.lead_routes import lead_bp
 
 # Register blueprints
 
 app.register_blueprint(ai_bp, url_prefix='/ai')
 app.register_blueprint(message_bp, url_prefix='/messages')
+app.register_blueprint(lead_bp, url_prefix='/leads')
 
 # Root endpoint for basic API information
 @app.route('/')
@@ -62,6 +64,7 @@ def home():
             "products": "/products",
             "images": "/images",
             "messages": "/messages",
+            "leads": "/leads",
             "health": "/health"
         }
     })
