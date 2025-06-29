@@ -255,13 +255,13 @@ class InterestAnalyzer:
         interest_level = "low"
         should_capture_lead = False
         
-        if interest_score >= 8:
+        if interest_score >= 10:
             interest_level = "high"
             should_capture_lead = True
-        elif interest_score >= 5:
+        elif interest_score >= 7:
             interest_level = "medium"
             should_capture_lead = True
-        elif interest_score >= 3:
+        elif interest_score >= 5:
             interest_level = "low"
             should_capture_lead = False
         
