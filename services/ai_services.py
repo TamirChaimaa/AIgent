@@ -7,26 +7,51 @@ class AiService:
     def __init__(self):
         # Create a Gemini chat client instance
         self.chat_client = ChatClient()
-        
-        # Fetch context (products) to guide the AI conversation
-        context = ProductContextProvider.fetch_product_context()
-        
-        # Start a new Gemini chat session with the product context
-        self.chat_client.start_chat(context)
     
     def ask_question(self, user_message: str) -> dict:
-        # Create a specific prompt to get product recommendations
+        # Fetch ALL products context with additional contexts
+        context = ProductContextProvider.fetch_product_context()
+        
+        # Start a new chat session with full context
+        self.chat_client.start_chat(context)
+        
+        # Create a comprehensive prompt that uses all contexts
         enhanced_prompt = f"""
         User question: {user_message}
         
-        Answer the question helpfully, then recommend relevant products.
+        IMPORTANT: Use all available context to provide the best recommendations:
+        
+        1. PRODUCT FILTERING:
+        - Filter products based on the user's specific question (price, features, category)
+        - Only recommend products that match the user's requirements
+        
+        2. PROMOTIONAL OPPORTUNITIES:
+        - Mention relevant promotions when applicable
+        - Suggest deals that could benefit the user
+        
+        3. SEASONAL RECOMMENDATIONS:
+        - Consider current season for recommendations
+        - Suggest seasonal products when relevant
+        
+        4. CUSTOMER PREFERENCES:
+        - Consider budget-friendly options if user seems price-conscious
+        - Suggest quality products for users who prioritize quality
+        - Recommend convenient and time-saving products
+        - Consider eco-friendly options when appropriate
+        
+        5. CATEGORY INSIGHTS:
+        - Use category-specific knowledge for better recommendations
+        - Consider what's popular and well-reviewed in each category
+        
+        Answer the question helpfully, then recommend ONLY the most relevant products.
+        Mention any applicable promotions or seasonal considerations.
         
         Format your response EXACTLY like this:
         MESSAGE: [your response message here]
         PRODUCTS: [list of product names separated by commas]
         
         Example:
-        MESSAGE: Here are some suggestions for your kitchen.
+        MESSAGE: Here are some great kitchen products for you. Don't forget we have 20% off on kitchen appliances this holiday season!
         PRODUCTS: Chef Knife, Cutting Board, Non-stick Pan
         """
         
