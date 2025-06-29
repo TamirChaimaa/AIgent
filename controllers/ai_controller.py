@@ -79,8 +79,17 @@ class AiController:
                 'contact_extraction': contact_data
             }
             
-            # Add lead capture message if user shows interest and no existing lead
-            if lead_capture_message and not linked_lead_id:
+            # Debug: Print interest analysis results
+            print(f"DEBUG - Interest Analysis:")
+            print(f"  should_capture_lead: {should_capture_lead}")
+            print(f"  serious_interest: {serious_interest}")
+            print(f"  interest_analysis: {interest_analysis}")
+            print(f"  linked_lead_id: {linked_lead_id}")
+            
+            # Create lead if user shows interest and no existing lead
+            if should_capture_lead and not linked_lead_id:
+                # Generate lead capture message
+                lead_capture_message = InterestAnalyzer.generate_lead_capture_message(interest_analysis)
                 response_data['lead_capture_message'] = lead_capture_message
                 response_data['should_capture_lead'] = True
                 
@@ -108,6 +117,8 @@ class AiController:
                     source_message_id=message_id
                 )
                 
+                print(f"DEBUG - Lead Creation Result: {lead_id}")
+                
                 if lead_id:
                     response_data['preliminary_lead_id'] = lead_id
                     response_data['lead_status'] = 'new' if contact_data.get('confidence') in ['high', 'medium'] else 'pending_contact_info'
@@ -117,8 +128,12 @@ class AiController:
                     if contact_data.get('confidence') in ['high', 'medium']:
                         LeadModel.link_message_to_lead(lead_id, message_id)
                         response_data['linked_lead_id'] = lead_id
+                else:
+                    print(f"DEBUG - Lead creation failed!")
+                    response_data['lead_created'] = False
             else:
                 response_data['should_capture_lead'] = False
+                print(f"DEBUG - No lead capture: should_capture_lead={should_capture_lead}, linked_lead_id={linked_lead_id}")
 
             return jsonify(response_data)                  
         
