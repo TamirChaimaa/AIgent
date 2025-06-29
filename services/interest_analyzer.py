@@ -280,36 +280,53 @@ class InterestAnalyzer:
     
     @staticmethod
     def generate_lead_capture_message(interest_analysis: Dict) -> Optional[str]:
-        """
-        Generate a friendly message to capture lead information
-        """
-        if not interest_analysis.get("should_capture_lead"):
-            return None
-        
-        interest_level = interest_analysis.get("interest_level", "medium")
-        products = interest_analysis.get("recommended_products", [])
-        
-        if interest_level == "high":
-            message = "🎉 Excellent! I see you're very interested in our products! "
-            message += "To offer you the best service and keep you informed of promotions, "
-            message += "I'd need a few details from you:\n\n"
-            message += "📝 **Your contact info:**\n"
-            message += "• Full name:\n"
-            message += "• Email address:\n"
-            message += "• Phone number:\n\n"
-            message += "Once we have this, I can:\n"
-            message += "✅ Send you personalized offers\n"
-            message += "✅ Contact you for personalized follow-up\n"
-            message += "✅ Inform you about new promotions\n"
-            message += "✅ Answer all your questions in detail"
-        else:
-            message = "Thank you for your interest in our products! "
-        if products:
-            product_names = ", ".join(products[:3])
-        
-        message += "\n\n💬 **Just reply with your information above!**"
-        
-        return message
+       """
+       Generate a friendly message to capture lead information
+       """
+       if not interest_analysis.get("should_capture_lead"):
+        return None
+
+       interest_level = interest_analysis.get("interest_level", "medium")
+       products = interest_analysis.get("recommended_products", [])
+
+       product_names = ", ".join(products[:3]) if products else ""
+       message = ""
+
+       if interest_level == "high":
+        message += "🎉 Excellent! I see you're very interested in our products"
+        if product_names:
+            message += f" like {product_names}"
+        message += "! To offer you the best service and keep you informed of promotions, "
+        message += "I'd need a few details from you:\n\n"
+        message += "📝 **Your contact info:**\n"
+        message += "• Full name:\n"
+        message += "• Email address:\n"
+        message += "• Phone number:\n\n"
+        message += "Once we have this, I can:\n"
+        message += "✅ Send you personalized offers\n"
+        message += "✅ Contact you for personalized follow-up\n"
+        message += "✅ Inform you about new promotions\n"
+        message += "✅ Answer all your questions in detail\n"
+        message += "\n💬 **Just reply with your information above!**"
+
+       elif interest_level == "medium":
+        message += "😊 Great! I see you're interested"
+        if product_names:
+            message += f" in {product_names}"
+        message += ". Could you please share your contact details so we can follow up?\n"
+        message += "📝 **Your contact info:**\n"
+        message += "• Full name:\n"
+        message += "• Email address:\n"
+        message += "• Phone number:\n"
+        message += "\n💬 **Just reply with your information above!**"
+
+       else:
+        message += "Thank you for your interest!"
+        if product_names:
+            message += f" You asked about: {product_names}."
+
+       return message
+
     
     @staticmethod
     def extract_product_names_from_question(question: str) -> List[str]:
