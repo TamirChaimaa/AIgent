@@ -11,17 +11,21 @@ A smart ecommerce platform featuring , an AI-powered shopping assistant that hel
 <table>
   <tr>
     <td width="50%">
-      <p style="text-align:center"><em>Welcome Screen - Meet Amine</em></p>
-      <img src="https://github.com/TamirChaimaa/FrontendAIAgent/blob/main/public/smartbyte.png" alt="Welcome Screen - Meet Amine" style="width:100%">
+      <p style="text-align:center"><em>Welcome Screen - and Ask Question</em></p>
+      <img src="https://github.com/TamirChaimaa/FrontendAIAgent/blob/main/public/smartbyte4.png" alt="Welcome Screen" style="width:100%">
     </td>
     <td width="50%">
       <p style="text-align:center"><em>AI-Powered Search Results</em></p>
-      <img src="https://github.com/TamirChaimaa/FrontendAIAgent/blob/main/public/smartbyte1.png" alt="AI-Powered Search Results" style="width:100%">
+      <img src="https://github.com/TamirChaimaa/FrontendAIAgent/blob/main/public/smartbyte1.png" alt="AI-Powered Search Results" style="width:100%"> 
+  </tr>
+</table>
+<table>
+  <tr>
+    <td width="50%">
+      <p style="text-align:center"><em></em></p>
+      <img src="https://github.com/TamirChaimaa/FrontendAIAgent/blob/main/public/smartbyte2.png" alt="other informations 2" style="width:100%">
     </td>
-      <td width="50%">
-      <p style="text-align:center"><em>AI-Powered Search Results</em></p>
-      <img src="https://github.com/TamirChaimaa/FrontendAIAgent/blob/main/public/smartbyte2.png" alt="AI-Powered Search Results" style="width:100%">
-    </td>
+   
   </tr>
 </table>
 
@@ -36,9 +40,9 @@ A smart ecommerce platform featuring , an AI-powered shopping assistant that hel
 
 ### 💼 Product Catalog
 
-* Top Brands: Apple, Dell, Lenovo, HP, Asus
-* Use Cases: Programming, Gaming, Business, Student
-* Filter by: RAM, processor, storage, screen size, battery
+* Top Brands: Apple, Dell, Lenovo, HP ..
+* Use Cases: Programming, Gaming, Business, Student....
+* Filter by: RAM, processor, storage, screen size, category....
 
 ### 💬 Chat Experience
 
@@ -54,10 +58,10 @@ A smart ecommerce platform featuring , an AI-powered shopping assistant that hel
 This project follows the **Model-View-Controller (MVC)** architectural pattern to ensure a clean separation of concerns, making it easier to maintain, scale, and test.
 
 **Frontend**
-React, Tailwind CSS, Vite
+React, Tailwind CSS
 
 **Backend**
-Flask (Python), Gemini Flash 1.5 (LLM), MongoDB
+Flask (Python), Gemini Flash 1.5 , MongoDB
 
 **Deployment**
 Frontend: Vercel
@@ -139,9 +143,8 @@ Database: MongoDB Atlas
 
 ## 🧪 Test Scenarios
 
-* "I need a MacBook for programming"
-* "What’s the price of Dell laptops under \$1000?"
-* "Can I reserve the Lenovo gaming model?"
+* "What is the weight and battery life of the MacBook Air M2?"
+* "What processor and RAM capacity does the Dell model designed for programming have?"
 
 ---
 
@@ -178,7 +181,7 @@ python server.py
 * Voice Search
 * Image-based Search
 * Payment Integration
-* French & Arabic Support
+* Arabic Support
 * Inventory Management for Admins
 
 
