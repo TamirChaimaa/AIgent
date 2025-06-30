@@ -139,8 +139,8 @@ class AiController:
         
         except Exception as e:             
             # Catch any unexpected error and return a 500 error response             
-            return jsonify({'message': 'AI response failed', 'error': str(e)}), 500
-    
+           # return jsonify({'message': 'AI response failed', 'error': str(e)}), 500
+           return jsonify({'message': 'Oops! Something went wrong. Please try again later.'}), 500   
     @staticmethod
     def _handle_contact_info_response(user_response: str, lead_id: str):
         """

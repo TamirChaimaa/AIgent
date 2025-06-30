@@ -31,7 +31,7 @@ class InterestAnalyzer:
         Detect if customer shows serious interest in purchasing
         """
         interest_keywords = [
-            "buy", "purchase", "order", "get this", "take it", "want this",
+            "buy", "purchase", "order", "get this", "take it", "want this","take",
             "interested in", "looks good", "perfect", "exactly what", 
             "how much", "price", "cost", "afford", "budget", "payment",
             "when can i", "available", "in stock", "reserve", "hold",
