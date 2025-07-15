@@ -6,12 +6,12 @@ from flask_cors import CORS
 # Création de l'application Flask
 app = Flask(__name__)
 
-# Configuration CORS - Autorise tous les domaines, méthodes et certains headers
+# Configuration CORS -
 CORS(app,
-     origins=['*'],  # Autorise TOUS les domaines à accéder à votre API
-     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  # Méthodes HTTP autorisées
-     allow_headers=['Content-Type', 'Authorization', 'Access-Control-Allow-Credentials'],  # Headers autorisés
-     supports_credentials=True  # Autorise l'envoi de cookies/credentials
+     origins=['https://frontend-ai-agent.vercel.app'],
+     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+     allow_headers=['Content-Type', 'Authorization', 'Access-Control-Allow-Credentials'],
+     supports_credentials=True
 )
 
 # Flask configuration
